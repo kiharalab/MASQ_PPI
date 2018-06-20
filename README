@@ -7,7 +7,7 @@ Permissions of this copyleft license are conditioned on making available complet
 
 - Introduction
 
-The purpose of MAss spectrometry data and Protein SeQuence-based PPI prediction method (MASQ_PPI) is to develop a complementary computational approach to aid large-scale protein-protein interactions (PPIs) identification. The protein eluction profiles are generated from size-exclusive chromagraphy. Protein will be clustered based on their elution profile. Sequence-based computational prediction method based on protein sequence are performed and use support vector machine to predict PPIs and exclude some false positive interactions. The sequence-based computational prediction method is the Guo's method (Guo, Y., Yu, L., Wen, Z., & Li, M. (2008). Using support vector machine combined with auto covariance to predict protein–protein interactions from protein sequences. Nucleic acids research, 36(9), 3025-3030.).
+The purpose of MAss spectrometry data and Protein SeQuence-based PPI prediction method (MASQ_PPI) is to develop a complementary computational approach to aid large-scale protein-protein interactions (PPIs) identification. The protein elution profiles are generated from size-exclusive chromatography. Protein will be clustered based on their elution profile. Sequence-based computational prediction method based on protein sequence are performed and use support vector machine to predict PPIs and exclude some false positive interactions. The sequence-based computational prediction method is the Guo's method (Guo, Y., Yu, L., Wen, Z., & Li, M. (2008). Using support vector machine combined with auto covariance to predict protein–protein interactions from protein sequences. Nucleic acids research, 36(9), 3025-3030.).
 
 - Steps
 
