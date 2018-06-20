@@ -1,0 +1,89 @@
+Contributors: Prof. Daisuke Kihara, Ziyun Ding, Xi He, Zixuan Liu
+Lab HomePage: http://www.kiharalab.org/
+License: GNU LGPLv3
+https://www.gnu.org/licenses/gpl-3.0.en.html
+
+Permissions of this copyleft license are conditioned on making available complete source code of licensed works and modifications under the same license or the GNU GPLv3. Copyright and license notices must be preserved. Contributors provide an express grant of patent rights. However, a larger work using the licensed work through interfaces provided by the licensed work may be distributed under different terms and without source code for the larger work.
+
+- Introduction
+
+The purpose of MAss spectrometry data and Protein SeQuence-based PPI prediction method (MASQ_PPI) is to develop a complementary computational approach to aid large-scale protein-protein interactions (PPIs) identification. The protein eluction profiles are generated from size-exclusive chromagraphy. Protein will be clustered based on their elution profile. Sequence-based computational prediction method based on protein sequence are performed and use support vector machine to predict PPIs and exclude some false positive interactions. The sequence-based computational prediction method is the Guo's method (Guo, Y., Yu, L., Wen, Z., & Li, M. (2008). Using support vector machine combined with auto covariance to predict protein–protein interactions from protein sequences. Nucleic acids research, 36(9), 3025-3030.).
+
+- Steps
+
+Step 1:
+
+Description:
+The purpose of is code is to find all protein IDs which have peak shift less or equal to 2 between 2 input experiments. Peak is the position of the protein elution profile where the largest value occurs, peak shift is the difference of peak positions for that protein in the two independent experiments.
+
+User can change hardCoded column number in this file if the input file is not in the consistent format with sample input file. For example, how the protein IDs are retrieved are up to the user, the experiment data position range can be modified based on input file.
+
+Code Name: ONE_filter_peakshiftprot.py 
+Execution: Two parameters are required, first is the path(relative/absolute) of input file, and the second is the path(relative/absolute) of output file.
+
+input: mass spectrometry experiment results in text file delimited by tab.
+output: normalized data within 2 shift peaks in tab delimited text file (The first column contains the protein ID, the rest of columns are normalized MS data).
+	
+Command: “python ONE_filter_peakshiftprot.py [inputfilePath] [outputFilePath]”
+			
+Step 2:
+
+Description: 
+Use hierarchy clustering method to cluster these proteins. This is a R script. The input file is the output file form the Step 1 (format needs to be the tab delimited text file). The first column is the protein ID, the rest of columns are normalized MS data. The clustering method could be average, complete, single, ward and so on. The number_clust is the number of expected cluster. It should be integer. The output indicates the output filename.
+
+Code Name: TWO_tree.R 
+Execution: Four arguments are required, the first “input_file_path” is the path(relative/absolute) of input file, the second “clustering_method” is the method of determining the distance(average), the third “number_clust” is the number of cut clusters, the forth “output_file_path” is the path(relative/absolute) of output file.
+   
+input: output file of filter_peakshiftprot.py
+output: each protein name and cluster id in txt file
+Command: “clust_protein([input_file_path], [clustering_method], [number_clust], [output_file_path])”
+
+
+Step 3:
+
+Description:
+Reorganize the file and do pairwisiing in the group after clustering.
+
+Code Name: THREE_open_fn.py
+Execution: This requires 2 arguments: the first one “inputfile_pathway” is the path of input file which is the output file of Tree.R and the second “outoutfile_pathway” is the path of output file which contains the pairwised protein id in the same cluster.
+	   
+Command: “python THREE_open_fn.py [inputfile_pathway] [outoutfile_pathway]”
+
+Step 4:
+
+Description:	
+Get sequence for each paired protein. Based on the reference genome sequence from UniProt (http://www.uniprot.org/), get sequence for the each pair of interacting proteins, and generate the input file for sequence features extraction.
+
+Code Name: FOUR_get_seq.py 
+Execution: Six arguments are required, the first “filepath1” is the path(relative/absolute) of output file from Step 3, the second “ filepath2” is the path(relative/absolute) of reference genome sequence downloaded from UniProt, the third “ outputfilepath1” is the path(relative/absolute) of output file which includes the IDs of protein pairs with amino acids length above 50 residues, the fourth “outputfilepath2” is the path(relative/absolute) of output file which include the amino acid sequences of protein pairs.
+
+input: 
+
+Command: “python FOUR_get_seq.py [filepath1] [filepath2] [outputfilepath1] [outputfilepath2]” 
+
+Step 5:
+
+Description:
+Sequence features extraction. User needs to modify the code in the matlab file. There is a description file named "Descriptors.csv", which need to be in the same directory with the script file. The original MatLab code and algorithm is from:
+Guo, Y., Yu, L., Wen, Z., & Li, M. (2008). Using support vector machine combined with auto covariance to predict protein–protein interactions from protein sequences. Nucleic acids research, 36(9), 3025-3030.
+
+Code Name:	FIVE_read.m
+Execution: input: sequence of pairwise protein, output: sequence features of each protein pair 	
+		
+Command: 
+“matlab -nodesktop -nodisplay	
+run FIVE_read.m”
+
+
+Step 6:
+
+Description:
+Using trained model “whole_ara_model” to predict the interaction. Users need to install LibSVM (available at http://www.csie.ntu.edu.tw/~cjlin/libsvm). Users could follow the README file to finish the installation.
+
+Code Name: SIX_run_svm_Aryal.py 
+Execution: Four parameters are required, the first “inputFilePath” is the “outputfilepath2” from Step 5, the second “ outputPath1” is the path of prediction(label), the third “outputPath2” is the path of prediction(value).
+	   
+Command: 
+python SIX_run_svm_Aryal.py [inputFilePath] [outputPath1] [outputPath2]
+
+
